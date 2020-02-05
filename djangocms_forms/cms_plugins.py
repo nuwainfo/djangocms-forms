@@ -109,8 +109,13 @@ class FormPlugin(CMSPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         # returns the first template that exists, falling back to bundled template
+        if instance.form_template == '':
+            t = 'djangocms_forms/form_template/default.html'
+        else:
+            t = instance.form_template
+        
         return select_template([
-            instance.form_template,
+            t,
             settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE,
             'djangocms_forms/form_template/default.html'
         ])

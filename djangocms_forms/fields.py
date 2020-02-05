@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import SET_NULL
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
+from djangocms_forms import DJANGO_VERSION
 
 from .conf import settings
 from .widgets import ReCaptchaWidget
@@ -64,7 +65,10 @@ class PluginReferenceField(models.ForeignKey):
         super(PluginReferenceField, self).__init__(*args, **kwargs)
 
     def _create(self, model_instance):
-        return self.rel.to._default_manager.create(name=model_instance.name)
+        if DJANGO_VERSION >= 20000: # 2.0.0:
+            return self.remote_field.model._default_manager.create(name=model_instance.name)
+        else:
+            return self.rel.to._default_manager.create(name=model_instance.name)
 
     def pre_save(self, model_instance, add):
         if not model_instance.pk and add:
