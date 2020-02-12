@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangocms_forms import DJANGO_VERSION
     
-if DJANGO_VERSION <= 20000: # 2.0.0:
+if DJANGO_VERSION < 20000: # 2.0.0:
     from django.core.urlresolvers import reverse
 else:
     from django.urls import reverse
@@ -336,7 +336,7 @@ class FormBuilder(forms.Form):
             self.email_submission(form_data, request=request, referrer=referrer)
 
     def save_to_db(self, form_data, request, referrer):
-        if DJANGO_VERSION <= 20000:
+        if DJANGO_VERSION < 20000:
             user = request.user if request.user.is_authenticated() else None
         else:
             user = request.user if request.user.is_authenticated else None
