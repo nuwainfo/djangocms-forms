@@ -37,7 +37,7 @@ setup(
     install_requires=[
         'django-appconf',
         'django-ipware',
-        'jsonfield',
+        'jsonfield==2.1.1',
         'unidecode',
         'tablib',
         'hashids',
