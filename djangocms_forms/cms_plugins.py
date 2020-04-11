@@ -93,6 +93,8 @@ class FormPlugin(CMSPluginBase):
                                  'but you are welcome to change this text as well.'),
                 'fields': ('post_submit_msg', )
             }),
+            
+            # success_redirect has no effect on whether to redirect
             (None, {
                 'fields': ('success_redirect', ('page_redirect', 'external_redirect'), 'redirect_delay',),
             }),
@@ -126,9 +128,11 @@ class FormPlugin(CMSPluginBase):
         context = super(FormPlugin, self).render(context, instance, placeholder)
         request = context['request']
 
+        # auto_id: https://docs.djangoproject.com/en/3.0/ref/forms/api/
+        #   #configuring-form-elements-html-id-attributes-and-label-tags
         form = FormBuilder(
             initial={'referrer': request.path_info}, form_definition=instance,
-            label_suffix='', auto_id='%s')
+            label_suffix='', auto_id=f'%s_{instance.id}')
 
         redirect_delay = instance.redirect_delay or \
             getattr(settings, 'DJANGOCMS_FORMS_REDIRECT_DELAY', 1000)
