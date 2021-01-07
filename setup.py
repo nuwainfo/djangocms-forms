@@ -42,7 +42,7 @@ setup(
         'tablib',
         'hashids',
         'requests',
-        'django-cms>=3.0',
+        #'django-cms>=3.0',
     ],
     license="BSD",
     zip_safe=False,
