@@ -6,7 +6,6 @@ import re
 
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models import CMSPlugin
@@ -19,7 +18,6 @@ from .fields import PluginReferenceField
 from .managers import ActiveFormManager
 
 
-@python_2_unicode_compatible
 class Form(models.Model):
     name = models.CharField(_('Name'), max_length=255, db_index=True, editable=False)
 
@@ -34,7 +32,6 @@ class Form(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class FormDefinition(CMSPlugin):
     name = models.CharField(_('Form Name'), max_length=255)
 
@@ -126,7 +123,6 @@ class FormDefinition(CMSPlugin):
             field.save()
 
 
-@python_2_unicode_compatible
 class FormField(models.Model):
     form = models.ForeignKey(FormDefinition, related_name='fields', on_delete=models.CASCADE,)
     field_type = models.CharField(
@@ -220,7 +216,6 @@ class FormField(models.Model):
             return [(choice, choice) for choice in choices]
 
 
-@python_2_unicode_compatible
 class FormSubmission(models.Model):
     plugin = models.ForeignKey(
         Form, verbose_name=_('Form'), editable=False, related_name='submissions', on_delete=models.CASCADE,)
