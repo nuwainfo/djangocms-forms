@@ -18,10 +18,12 @@ if DJANGO_VERSION < 20000: # 2.0.0:
     from django.core.urlresolvers import reverse
 else:
     from django.urls import reverse
+    
 try:
-    from ipware.ip import get_client_ip
+    from ipware import get_client_ip
 except ImportError:
     from ipware.ip import get_ip
+    
 from unidecode import unidecode
 
 from .fields import FormBuilderFileField, HoneyPotField, MultipleChoiceAutoCompleteField, ReCaptchaField
