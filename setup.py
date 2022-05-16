@@ -23,7 +23,7 @@ if sys.argv[-1] == 'publish':
 readme = open('README.rst').read()
 
 setup(
-    name='djangocms-forms-Zephyrus5',
+    name='djangocms-forms',
     version=version,
     description="""The easiest and most flexible Django CMS Form builder w/ ReCaptcha v2 support!""",
     long_description=readme,
