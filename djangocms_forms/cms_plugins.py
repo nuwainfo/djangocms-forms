@@ -6,7 +6,7 @@ from django import forms
 from django.contrib import admin
 from django.db import models
 from django.template.loader import select_template
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
@@ -31,8 +31,8 @@ class FormFieldInline(admin.StackedInline):
     def get_fieldsets(self, request, obj=None):
         fields = (
             ('label', 'field_type', 'required'),
-            'initial', 'placeholder_text', 'help_text', 
-            'choice_values', 'position', 
+            'initial', 'placeholder_text', 'help_text',
+            'choice_values', 'position',
         )
 
         if settings.DJANGOCMS_FORMS_ALLOW_CUSTOM_FIELD_NAME:
@@ -111,15 +111,8 @@ class FormPlugin(CMSPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         # returns the first template that exists, falling back to bundled template
-        if instance.form_template == '':
-            t = (settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE 
-                 if settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE 
-                 else 'djangocms_forms/form_template/default.html')
-        else:
-            t = instance.form_template
-        
         return select_template([
-            t,
+            instance.form_template,
             settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE,
             'djangocms_forms/form_template/default.html'
         ])
@@ -128,11 +121,9 @@ class FormPlugin(CMSPluginBase):
         context = super(FormPlugin, self).render(context, instance, placeholder)
         request = context['request']
 
-        # auto_id: https://docs.djangoproject.com/en/3.0/ref/forms/api/
-        #   #configuring-form-elements-html-id-attributes-and-label-tags
         form = FormBuilder(
             initial={'referrer': request.path_info}, form_definition=instance,
-            label_suffix='', auto_id=f'%s_{instance.id}')
+            label_suffix='', auto_id='%s')
 
         redirect_delay = instance.redirect_delay or \
             getattr(settings, 'DJANGOCMS_FORMS_REDIRECT_DELAY', 1000)

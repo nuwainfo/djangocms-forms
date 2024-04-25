@@ -19,3 +19,6 @@ def hashid_to_int(hashid, min_length=30, salt=settings.DJANGOCMS_FORMS_HASHIDS_S
         return hashids.decode(hashid)[0]
     except IndexError:
         pass
+
+def isAjax(request):
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'

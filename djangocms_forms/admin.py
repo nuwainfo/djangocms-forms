@@ -15,15 +15,16 @@ from django.shortcuts import redirect
 from django.template.defaultfilters import slugify, yesno
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from django.utils.text import Truncator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from tablib import Dataset
 
 from .conf import settings
 from .forms import SubmissionExportForm
 from .models import Form, FormSubmission
+from .utils import isAjax
 
 try:
     from django.contrib.admin.options import IS_POPUP_VAR
@@ -98,7 +99,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
         Add the export view to urls.
         """
         urls = super(FormSubmissionAdmin, self).get_urls()
-        from django.conf.urls import url
+        from django.urls import re_path
 
         def wrap(view):
             def wrapper(*args, **kwargs):
@@ -108,7 +109,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
         info = self.model._meta.app_label, self.model._meta.model_name
 
         extra_urls = [
-            url(r'^export/$', wrap(self.export_view), name='%s_%s_export' % info),
+            re_path(r'^export/$', wrap(self.export_view), name='%s_%s_export' % info),
         ]
         return extra_urls + urls
 
@@ -128,7 +129,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
 
         if obj:
             context.update({
-                'title': force_text(obj.plugin),
+                'title': force_str(obj.plugin),
             })
 
         return super(FormSubmissionAdmin, self).change_view(
@@ -163,7 +164,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
                 message = _('No matching %s found for the given criteria. '
                             'Please try again.') % self.opts.verbose_name_plural
                 self.message_user(request, message, level=messages.WARNING)
-                if request.is_ajax():
+                if isAjax(request):
                     data = {
                         'reloadBrowser': True,
                         'submissionCount': 0,
@@ -182,7 +183,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
                         if label not in headers:
                             headers.append(label)
 
-                if request.is_ajax():
+                if isAjax(request):
                     data = {
                         'reloadBrowser': False,
                         'submissionCount': queryset.count(),
@@ -213,7 +214,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
                     if label in headers:
                         row[headers.index(label)] = humanize(field)
 
-                    row[-4] = force_text(submission.created_by or _('Unknown')) 
+                    row[-4] = force_str(submission.created_by or _('Unknown'))
                     row[-3] = submission.creation_date.strftime(
                         settings.DJANGOCMS_FORMS_DATETIME_FORMAT)
                     row[-2] = submission.ip
@@ -248,7 +249,7 @@ class FormSubmissionAdmin(admin.ModelAdmin):
         media = self.media + adminform.media
 
         context = {
-            'title': _('Export %s') % force_text(self.opts.verbose_name_plural),
+            'title': _('Export %s') % force_str(self.opts.verbose_name_plural),
             'adminform': adminform,
             'is_popup': (IS_POPUP_VAR in request.POST or IS_POPUP_VAR in request.GET),
             'media': mark_safe(media),
