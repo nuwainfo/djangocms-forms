@@ -77,6 +77,8 @@ class DjangoCMSFormsConf(AppConf):
     WIDGET_CSS_CLASSES = {}
 
     ALLOW_CUSTOM_FIELD_NAME = True
+    
+    HAS_DEFAULT_JQUERY = True
 
     class Meta:
         prefix = 'djangocms_forms'

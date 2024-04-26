@@ -125,13 +125,13 @@ class FormPlugin(CMSPluginBase):
             initial={'referrer': request.path_info}, form_definition=instance,
             label_suffix='', auto_id='%s')
 
-        redirect_delay = instance.redirect_delay or \
-            getattr(settings, 'DJANGOCMS_FORMS_REDIRECT_DELAY', 1000)
+        redirect_delay = instance.redirect_delay or getattr(settings, 'DJANGOCMS_FORMS_REDIRECT_DELAY', 1000)
 
         context.update({
             'form': form,
             'recaptcha_site_key': settings.DJANGOCMS_FORMS_RECAPTCHA_PUBLIC_KEY,
-            'redirect_delay': redirect_delay
+            'redirect_delay': redirect_delay,
+            'useJQuery': settings.DJANGOCMS_FORMS_HAS_DEFAULT_JQUERY,
         })
         return context
 
