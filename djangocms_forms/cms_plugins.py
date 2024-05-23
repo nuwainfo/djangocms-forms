@@ -93,7 +93,7 @@ class FormPlugin(CMSPluginBase):
                                  'but you are welcome to change this text as well.'),
                 'fields': ('post_submit_msg', )
             }),
-            
+
             # success_redirect has no effect on whether to redirect
             (None, {
                 'fields': ('success_redirect', ('page_redirect', 'external_redirect'), 'redirect_delay',),
@@ -111,8 +111,15 @@ class FormPlugin(CMSPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         # returns the first template that exists, falling back to bundled template
+        if instance.form_template == '':
+            t = (settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE
+                 if settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE
+                 else 'djangocms_forms/form_template/default.html')
+        else:
+            t = instance.form_template
+
         return select_template([
-            instance.form_template,
+            t,
             settings.DJANGOCMS_FORMS_DEFAULT_TEMPLATE,
             'djangocms_forms/form_template/default.html'
         ])
@@ -121,9 +128,11 @@ class FormPlugin(CMSPluginBase):
         context = super(FormPlugin, self).render(context, instance, placeholder)
         request = context['request']
 
+        # auto_id: https://docs.djangoproject.com/en/3.0/ref/forms/api/
+        #   #configuring-form-elements-html-id-attributes-and-label-tags
         form = FormBuilder(
             initial={'referrer': request.path_info}, form_definition=instance,
-            label_suffix='', auto_id='%s')
+            label_suffix='', auto_id=f'%s_{instance.id}')
 
         redirect_delay = instance.redirect_delay or getattr(settings, 'DJANGOCMS_FORMS_REDIRECT_DELAY', 1000)
 
@@ -131,7 +140,7 @@ class FormPlugin(CMSPluginBase):
             'form': form,
             'recaptcha_site_key': settings.DJANGOCMS_FORMS_RECAPTCHA_PUBLIC_KEY,
             'redirect_delay': redirect_delay,
-            'useJQuery': settings.DJANGOCMS_FORMS_HAS_DEFAULT_JQUERY,
+            'hasJQuery': settings.DJANGOCMS_FORMS_HAS_DEFAULT_JQUERY,
         })
         return context
 
