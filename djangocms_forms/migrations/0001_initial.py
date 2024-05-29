@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ('initial', models.CharField(max_length=255, verbose_name='Default Value', blank=True)),
                 ('choice_values', models.TextField(help_text='Enter options one per line. For "File Upload" field type, enter allowed filetype (e.g .pdf) one per line.', verbose_name='Choices', blank=True)),
                 ('position', models.PositiveIntegerField(null=True, verbose_name='Position', blank=True)),
-                ('form', models.ForeignKey(related_name='fields', to='djangocms_forms.FormDefinition')),
+                ('form', models.ForeignKey(related_name='fields', to='djangocms_forms.FormDefinition', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('position',),
@@ -84,8 +84,8 @@ class Migration(migrations.Migration):
                 ('creation_date', models.DateTimeField(auto_now=True, verbose_name='Date')),
                 ('ip', models.GenericIPAddressField(null=True, verbose_name=b'IP', blank=True)),
                 ('form_data', jsonfield.fields.JSONField(verbose_name='Form Data')),
-                ('created_by', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='User')),
-                ('plugin', models.ForeignKey(related_name='submissions', editable=False, to='djangocms_forms.Form', verbose_name='Form')),
+                ('created_by', models.ForeignKey(editable=False, to=settings.AUTH_USER_MODEL, null=True, verbose_name='User', on_delete=models.CASCADE)),
+                ('plugin', models.ForeignKey(related_name='submissions', editable=False, to='djangocms_forms.Form', verbose_name='Form', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-creation_date',),
